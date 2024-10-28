@@ -1,0 +1,2 @@
+0
+2 6 10 11 13 35 None None None 

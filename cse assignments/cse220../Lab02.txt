@@ -1,0 +1,220 @@
+class CircularArray:
+  def __init__(self, lin, st, sz):
+    # Initializing Variables
+    self.start = st
+
+    self.size = sz
+    self.cir = [None]* len(lin)
+
+    val = st
+    for idx in range(sz):
+      self.cir[val] = lin[idx]
+      val = (val+1)%len(lin)
+  
+    
+    # if lin = [10, 20, 30, 40, None]
+    # then, CircularArray(lin, 2, 4) will generate
+    # cir = [40, null, 10, 20, 30]
+    
+
+  def printFullLinear(self): #Easy
+   for idx in range(len(self.cir)):
+     if idx == len(self.cir) - 1:
+        print(self.cir[idx], end = ' ')
+     else:
+        print(self.cir[idx], end = ', ')
+   
+   print()
+
+
+  def printForward(self):
+    g = self.start
+    for idx in range(self.size):
+      if idx == self.size-1:
+        print(self.cir[g], end = ' ')
+      else:
+        print(self.cir[g], end = ', ')
+      g = (g+1) % len(self.cir)
+    print()
+
+  
+  def printBackward(self):
+    Idx = (self.start + self.size - 1) % len(self.cir)
+    for i in range(self.size):
+      if i == self.size-1:
+        print(self.cir[idx], end = ' ')
+      else:
+        print(self.cir[idx], end = ', ')
+      idx = idx - 1
+      if idx < 0:
+        Idx = len(self.cir) - 1
+    print()
+  
+
+  def linearize(self):
+    arr1 = [None]* self.size
+    strt = self.start
+    for i in range(self.size):
+      arr1[i] = self.cir[strt]
+      strt = (strt + 1) % len(self.cir)
+    self.cir = arr1
+
+
+  def resizeStartUnchanged(self, newcapacity): #Medium
+    new_cir = [None]* newcapacity
+    k = self.start
+    indx = self.start
+    for p in range(self.size):
+      new_cir[indx] = self.cir[k]
+      k = (k+1) % len(self.cir)
+      indx = (indx+ 1) % len(new_cir)
+    self.cir = new_cir
+    
+
+
+  def palindromeCheck(self): #Hard
+    var1 = self.start
+    var2 = (self.start + self.size - 1) % len(self.cir)
+    for i in range(self.size):
+      if self.cir[var1] == self.cir[var2]:
+        pass
+      else:
+        print("This array is NOT a palindrom")
+        return 
+      var1 = (var1 + 1) % len(self.cir)
+      var2 = var2 - 1
+      if var2 < 0:
+        var2 = len(self.cir) - 1
+    print("This array is a Palindrome")
+    
+
+
+  def sort(self):
+    
+    for p in range(self.size):
+      k = self.start
+      for q in range(0, (self.size) - p -1):
+        var = (k +1) % len(self.cir)
+        if self.cir[k] > self.cir[var]:
+          value = self.cir[k]
+          self.cir[k] = self.cir[var]
+          self.cir[var] = value
+        k = (k+1) % len(self.cir)
+
+
+  def equivalent(self, cir_arr):
+    k = self.start
+    m = cir_arr.start
+    for elm in range(self.size):
+      if self.cir[k] != cir_arr.cir[m]:
+        return False  
+      k = (k+1)% len(self.cir)
+      m = (m+1) % len(cir_arr.cir)
+    return True
+
+
+  def intersection(self, c2):
+    count = 0
+    count2 = 0
+    val = 0
+    st1 = self.start
+    st2 = c2.start
+    arr = [None]* (len(self.cir))
+    for p in range(len(self.cir)):
+      for q in range(len(c2.cir)):
+        if self.cir[st1] != None and self.cir[st1] == c2.cir[st2]:
+          flag = True
+          for res in range(len(arr)):
+            if arr[res] == c2.cir[st2]:
+              flag = False
+              break
+          if flag == True:
+            arr[count] = c2.cir[st2]
+            count += 1
+            val = count
+            break
+        st2 = (st2 + 1) % len(c2.cir)
+      st2 = c2.start
+      st1 = (st1 + 1)% len(self.cir)
+        
+    arr2 = [None]* val
+    for i in arr:
+      if i != None:
+        arr2[count2] = i
+        count2 += 1
+
+    return arr2
+
+# Tester class. Run this cell after completing methods in the upper cell and
+# check the output
+
+lin_arr1 = [10, 20, 30, 40, None]
+
+print("==========Test 1==========")
+c1 = CircularArray(lin_arr1, 2, 4)
+c1.printFullLinear() # This should print: 40, None, 10, 20, 30
+c1.printForward() # This should print: 10, 20, 30, 40
+c1.printBackward() # This should print: 40, 30, 20, 10
+
+print("==========Test 2==========")
+c1.linearize()
+c1.printFullLinear() # This should print: 10, 20, 30, 40
+
+print("==========Test 3==========")
+lin_arr2 = [10, 20, 30, 40, 50]
+c2 = CircularArray(lin_arr2, 2, 5)
+c2.printFullLinear() # This should print: 40, 50, 10, 20, 30
+c2.resizeStartUnchanged(8) # parameter --> new Capacity
+c2.printFullLinear() # This should print: None, None, 10, 20, 30, 40, 50, None
+
+print("==========Test 4==========")
+lin_arr3 = [10, 20, 30, 20, 10, None, None]
+c3 = CircularArray(lin_arr3, 3, 5)
+c3.printForward() # This should print: 10, 20, 30, 20, 10
+c3.palindromeCheck() # This should print: This array is a palindrome
+
+print("==========Test 5==========")
+lin_arr4 = [10, 20, 30, 20, None, None, None]
+c4 = CircularArray(lin_arr4, 3, 4)
+c4.printForward() # This should print: 10, 20, 30, 20
+c4.palindromeCheck() # This should print: This array is NOT a palindrome
+
+print("==========Test 6==========")
+lin_arr5 = [10, 20, -30, 20, 50, 30, None]
+c5 = CircularArray(lin_arr5, 5, 6)
+c5.printForward() # This should print: 10, 20, -30, 20, 50, 30
+c5.sort()
+c5.printForward() # This should print: -30, 10, 20, 20, 30, 50
+
+print("==========Test 7==========")
+lin_arr6 = [10, 20, -30, 20, 50, 30, None]
+c6 = CircularArray(lin_arr6, 2, 6)
+c7 = CircularArray(lin_arr6, 5, 6)
+c6.printForward() # This should print: 10, 20, -30, 20, 50, 30
+c7.printForward() # This should print: 10, 20, -30, 20, 50, 30
+print(c6.equivalent(c7)) # This should print: True
+
+print("==========Test 8==========")
+lin_arr7 = [10, 20, -30, 20, 50, 30, None, None, None]
+c8 = CircularArray(lin_arr7, 8, 6)
+c6.printForward() # This should print: 10, 20, -30, 20, 50, 30
+c8.printForward() # This should print: 10, 20, -30, 20, 50, 30
+print(c6.equivalent(c8)) # This should print: True
+
+print("==========Test 9==========")
+lin_arr8 = [10, 20, 30, 40, 50, 60, None, None, None]
+c9 = CircularArray(lin_arr8, 8, 6)
+c6.printForward() # This should print: 10, 20, -30, 20, 50, 30
+c9.printForward() # This should print: 10, 20, 30, 40, 50, 60
+print(c6.equivalent(c9)) # This should print: False
+
+print("==========Test 10==========")
+lin_arr9 = [10, 20, 30, 40, 50, None, None, None]
+c10 = CircularArray(lin_arr9, 5, 5)
+c10.printFullLinear() # This should print: 40, 50, None, None, None, 10, 20, 30
+lin_arr10 = [5, 40, 15, 25, 10, 20, 5, None, None, None, None, None]
+c11 = CircularArray(lin_arr10, 8, 7)
+c11.printFullLinear() # This should print: 10, 20, 5, None, None, None, None, None, 5, 40, 15, 25
+output = c10.intersection(c11)
+print(output) # This should print: [10, 20, 40]
+

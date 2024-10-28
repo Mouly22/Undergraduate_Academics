@@ -1,0 +1,159 @@
+
+
+def shiftLeft(source, indx):
+    for elem in range(indx):
+        var = 0
+        for x in range(len(source)-1):
+            source[x] = source[x+1]
+        source[-1] = var
+    return source
+
+    
+source = [10, 20, 30, 40, 50, 60]
+print(shiftLeft(source, 3))
+
+
+def RotateLeft(source, indx):
+    for elem in range(indx):
+        var = source[0]
+        for x in range(len(source)-1):
+            source[x] = source[x+1]
+        source[-1] = var
+    return source 
+source = [10, 20, 30, 40, 50, 60]
+print(RotateLeft(source, 3))
+
+
+
+def shiftRight(source, indx):
+    for i in range(indx):
+        var = 0
+        for x in range(len(source)-1, -1, -1):
+            source[x] = source[x-1]
+        source[0] = var
+    return source
+source = [10, 20, 30, 40, 50, 60]
+print(shiftRight(source, 3))
+
+
+
+def RotateRight(source, indx):
+    for g in range(indx):
+        var = source[-1]
+        for x in range(len(source)-1, -1, -1):
+            source[x] = source[x-1]
+        source[0] = var
+    return source
+        
+    
+source = [10, 20, 30, 40, 50, 60]
+print(RotateRight(source, 3))
+
+
+
+def remove(source, size, idx):
+    y = 0
+    if idx >= size:
+        return "Input a correct index"
+    for x in range(idx, size-1, 1):
+        source[x] = source[x+1]
+
+    source[size-1] = 0
+    return source 
+ 
+source = [10, 20, 30, 40, 50, 0, 0]
+print(remove(source, 5, 2))
+
+
+
+def removeAll(source, size, element):
+    count = 0
+    narray = [0]* len(source)
+    for x in range(len(source)):
+        if source[x] == element:
+            continue
+        else:
+            narray[count] = source[x]
+        count += 1
+        
+        if count >= size:
+            break
+            
+    source = narray
+    return source
+            
+    
+source=[10,2,30,2,50,2,2,0,0]
+print(removeAll(source,7,2))
+
+
+
+def split(source):
+    i = 1
+    for p in range(len(source)):
+        var1 = 0
+        
+        for elm in range(0,i):
+            var1 += source[elm]  
+            
+        var2 = 0
+        for elm2 in range(i, len(source)):
+            var2 += source[elm2]   
+        i += 1     
+        if var1 == var2:
+            res ='true'
+            break
+        else:
+            res = 'false'        
+    print(res)          
+source =  [10, 3, 1, 2, 10] 
+print(split(source))
+
+
+
+def ArraySeries(n):
+    narray = (n*n)*[0]
+    temp = 1
+    for i in range(n-1, len(narray), n):
+        for inc in range(temp):
+            narray[i- inc] = inc + 1
+        temp += 1
+    return narray 
+
+print(ArraySeries(4))
+
+
+
+def MaxBunch(source):
+    count = 1
+    temp = None
+    store = None
+    narray = []
+    for i in range(len(source)):
+        if temp == None and store == None:
+            temp = source[i]
+            store = 1
+        elif source[i] == temp:
+            count += 1
+
+            if store < count:              
+                store = count
+        else:
+            count = 1
+            temp = source[i]
+    return store
+
+source =  [1, 2, 2, 3, 4, 4, 4]
+print(MaxBunch(source))
+
+
+
+
+
+
+
+
+
+
+
+
