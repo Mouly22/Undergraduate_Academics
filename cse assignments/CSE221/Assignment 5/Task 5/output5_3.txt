@@ -1,2 +1,0 @@
-Time:2
-Shortest Path: 1 4 7 
