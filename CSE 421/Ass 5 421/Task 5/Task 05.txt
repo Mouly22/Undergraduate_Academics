@@ -1,0 +1,17 @@
+﻿Task 05 command lines file:
+
+
+
+
+
+
+
+
+For R1 Router:
+R1>enable
+R1#configure terminal
+R1(config)#int g0/0
+R1(config-if)#ip helper-address 192.168.60.253
+R1(config-if)#exit
+R1(config)#exit
+R1#exit
