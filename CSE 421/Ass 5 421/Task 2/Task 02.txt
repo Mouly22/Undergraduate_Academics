@@ -1,0 +1,16 @@
+﻿Task 02 command lines file:
+
+
+
+
+
+
+
+
+For Edge_Router:
+Edge_Router>enable
+Edge_Router#configure terminal
+Edge_Router(config)#ip route 0.0.0.0 0.0.0.0 se0/0/0
+Edge_Router(config)#ip route 0.0.0.0 0.0.0.0 se0/0/1 5
+Edge_Router(config)#ipv6 route ::/0 2001:DB8:A:2::1 5
+Edge_Router(config)#exit
