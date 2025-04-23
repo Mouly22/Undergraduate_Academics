@@ -1,0 +1,1202 @@
+﻿CSE341: Microprocessors
+
+
+
+
+
+
+                      Lab Assignment 02
+
+
+
+
+
+
+
+
+Name: Umme Abira Azmary
+ID: 20101539
+Section: 10
+
+
+
+
+
+
+
+
+
+
+Answer to the question no - 1:
+
+
+   
+
+
+.MODEL SMALL 
+
+
+;write here to initialize marco
+
+
+string_print macro x
+    
+    lea dx, x
+    mov ah,9
+    int 21h     
+        
+endm     ;end macro
+
+
+.STACK 100H
+.DATA    
+    
+val1 db "This is a Character String $"  
+
+
+; declare variables here
+.CODE
+MAIN PROC
+
+
+; initialize DS
+
+
+MOV AX,@DATA
+MOV DS,AX
+ 
+; enter your code here
+
+
+lea bx, val1
+string_print bx
+ 
+;exit to DOS
+               
+MAIN ENDP
+    END MAIN
+
+
+Answer to the question no - 2:
+
+
+
+
+.MODEL SMALL 
+
+
+;write here to initialize marco
+
+
+factorial macro x 
+    mov ax, 1
+    looping:
+    mul cx
+    loop looping 
+             
+endm     ;end macro 
+
+
+;output is stored at Register AX
+
+
+.STACK 100H
+.DATA    
+    
+val1 db 6   ;input value can be changed from here 
+
+
+; declare variables here
+
+
+.CODE
+MAIN PROC
+; initialize DS
+
+
+MOV AX,@DATA
+MOV DS,AX
+ 
+; enter your code here
+
+
+mov ch, 0
+mov cl, val1
+factorial cx
+ 
+;exit to DOS
+
+
+MAIN ENDP
+    END MAIN
+
+
+
+
+
+
+
+
+
+
+
+
+Answer to the question no - 3:
+
+
+
+
+
+
+.MODEL SMALL  
+reverse macro x
+    
+mov ah, 9
+lea dx, str1
+int 21h  
+mov ax, str1
+mov si, x
+
+
+inp_stack:
+mov ah, 1
+int 21h
+mov size1, al
+mov ah, 0h
+cmp ax, 2Eh  ;used . to stop taking input
+
+
+je new_line
+je loop_exit
+
+
+;stack
+push ax
+inc si
+
+
+jmp inp_stack  
+
+
+;new line
+
+
+new_line:
+;new line
+mov ah, 2
+mov dl, 0AH
+int 21h
+mov dl, 0DH
+int 21h
+
+
+mov ah, 9
+lea dx, str2
+int 21h
+
+
+loop_exit: 
+
+
+cmp sp, 100h
+je exit
+
+
+pop dx 
+mov ah, 2
+int 21h
+
+
+jmp loop_exit
+    
+endm
+ 
+.STACK 100H
+
+
+.DATA
+   
+str1 dw "Enter a string and stop it using a dot(.): $"
+str2 dw "Reverse string: $" 
+size1 db ? 
+
+
+
+
+; declare variables here
+
+
+.CODE
+MAIN PROC
+
+
+; initialize DS
+
+
+MOV AX,@DATA
+MOV DS,AX
+ 
+; enter your code here 
+
+
+reverse 0
+
+
+;exit to DOS 
+exit:
+               
+MOV AX,4C00H
+INT 21H
+
+
+MAIN ENDP
+END MAIN
+
+
+
+
+Answer to the question no - 4:
+
+
+.MODEL SMALL  
+
+
+
+
+reverse macro x
+    
+mov ah, 9
+lea dx, str1
+int 21h  
+
+
+
+
+
+
+mov si, x
+
+
+inp_stack:
+mov ah, 1
+int 21h
+mov size1, al
+mov ah, 0h
+cmp ax, 2Eh  ;used . to stop taking input
+
+
+je inputoff 
+
+
+
+
+cmp al, 28h
+
+
+je stackpush
+
+
+
+
+cmp al, 7Bh
+
+
+je stackpush
+
+
+
+
+cmp al, 5Bh
+
+
+je stackpush
+
+
+
+
+cmp al, 29h
+
+
+je firstbrac
+
+
+
+
+cmp al, 7Dh
+
+
+je secondbrac
+
+
+
+
+cmp al, 5Dh
+
+
+je thirdbrac
+
+
+
+
+jmp inp_stack
+
+
+
+
+
+
+
+
+
+
+
+
+stackpush:
+
+
+push ax
+
+
+
+
+jmp inp_stack
+
+
+
+
+
+
+firstbrac:
+
+
+mov bl,al
+
+
+pop cx
+
+
+cmp cl, 28h  
+je inp_stack 
+jne errorexist 
+
+
+
+
+
+
+
+
+
+
+secondbrac:
+
+
+
+
+mov bl,al
+
+
+pop cx
+
+
+cmp cl, 7Bh
+je inp_stack
+jne errorexist 
+
+
+
+
+thirdbrac: 
+
+
+mov bl,al
+
+
+pop cx
+
+
+cmp cl, 5Bh 
+je inp_stack 
+jne errorexist 
+
+
+
+
+
+
+
+
+
+
+inputoff:
+
+
+cmp sp, 100h
+
+
+je perfect
+
+
+jne errorexist 
+
+
+
+
+
+
+
+
+
+
+perfect:
+
+
+mov ah, 2
+mov dl, 0AH
+int 21h
+mov dl, 0DH
+int 21h 
+mov ah,9
+lea dx, str2
+int 21h
+
+
+jmp exittemp  
+
+
+
+
+
+
+errorexist: 
+
+
+mov ah, 2
+mov dl, 0AH
+int 21h
+mov dl, 0DH
+int 21h 
+mov ah,9
+lea dx, str3
+int 21h
+
+
+
+
+
+
+
+
+exittemp:
+
+
+    
+endm
+ 
+.STACK 100H
+
+
+.DATA
+   
+str1 dw "Enter a equation and end it using a dot(.): $"
+str2 dw "The equation is balanced $" 
+str3 dw "The equation is not balanced $" 
+size1 db ? 
+
+
+
+
+; declare variables here
+
+
+.CODE
+MAIN PROC
+
+
+; initialize DS
+
+
+MOV AX,@DATA
+MOV DS,AX
+ 
+; enter your code here 
+
+
+reverse 0
+
+
+;exit to DOS 
+exit:
+               
+MOV AX,4C00H
+INT 21H
+
+
+MAIN ENDP
+    END MAIN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Answer to the question no - 5:
+
+
+ .MODEL SMALL   
+highest_number macro x 
+mov ah, 9
+lea dx, str1
+int 21h
+mov ch, 0
+mov cl, x
+;loop 
+mov si, 0
+enter_value: 
+mov ah, 1
+int 21h
+mov arr1[si], al
+add si, 1
+loop enter_value
+
+
+;new line
+mov ah, 2
+mov dl, 0AH
+int 21h
+mov dl, 0DH
+int 21h
+
+
+mov ah, 9
+lea dx, str2
+int 21h
+
+
+;ascending using sorting  
+mov ch, 0
+mov cl, 3
+func1:
+mov dx, 0 
+
+
+func2:
+mov si, dx
+mov bh, arr1[si] 
+add si, 1h
+
+
+mov bl, arr1[si]
+mov size1, bh
+mov size2, bl 
+
+
+cmp bh, bl 
+jg swap
+jle no_swap 
+
+
+swap: 
+mov arr1[si], bh
+sub si, 1h
+mov arr1[si], bl
+
+
+no_swap:  
+inc dx
+cmp dx, 2
+jle func2
+loop func1
+;output
+mov si, 3
+sorting_vals:
+mov dl, arr1[si]
+mov ah, 2
+int 21h 
+
+
+endm
+    
+ 
+.STACK 100H
+
+
+.DATA
+   
+str1 dw "Enter three values: $" 
+str2 dw "The highest value is: $"
+size1 db ? 
+size2 db ?
+arr1 db 3 dup(?)
+
+
+; declare variables here
+
+
+.CODE
+MAIN PROC
+
+
+; initialize DS
+MOV AX,@DATA
+MOV DS,AX
+ 
+; enter your code here
+highest_number 3 
+;exit to DOS
+MAIN ENDP
+    END MAIN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Answer to the question no - 6:
+
+
+org 100H ; procedural work er jnno minial hoy
+
+
+.DATA    
+str1 dw "Enter numbers and stop taking input using a dot(.): $"
+str2 dw "Largest Number is: $" 
+
+
+; declare variables here  
+
+
+.CODE
+MAIN PROC
+; initialize DS
+
+
+MOV AX,@DATA
+MOV DS,AX
+
+
+
+
+mov ah,9
+lea dx, str1
+
+
+int 21h
+
+
+mov bh,0h
+inputtaking:
+mov ah,1
+int 21h
+
+
+cmp al, 2Eh
+je stopinput
+
+
+mov bl, al
+sub bl, 30h
+call maximum
+jmp inputtaking
+
+
+stopinput:
+mov ah, 2
+mov dl, 0AH
+int 21h
+mov dl, 0DH
+int 21h 
+mov ah,9
+lea dx, str2
+int 21h 
+mov dh, 0h
+
+
+mov dl, bh
+add dl, 30h
+mov ah, 2
+int 21h 
+jmp exit
+
+
+maximum proc
+    cmp bh, bl
+    jg big_first 
+    mov bh, bl 
+    big_first:
+
+
+    ret  
+maximum endp
+   ;exit to DOS
+             
+
+
+exit:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Answer to the question no - 7:
+
+
+.MODEL SMALL
+ 
+org 100H
+
+
+.DATA   
+str1 dw "Enter a number: $"
+str2 dw "Enter the power number: $"
+str3 dw "Answer is in Register $" 
+size1 db ? 
+var1 dw ?
+var2 dw ? 
+lst1 db 30 dup(?)
+var3 dw ?
+
+
+; declare variables here
+
+
+.CODE
+MAIN PROC
+; initialize DS
+
+
+MOV AX,@DATA
+MOV DS,AX 
+; enter your code here   
+
+
+call power_calc
+    
+jmp exitmain
+
+
+power_calc proc 
+
+
+mov ah, 9
+lea dx, str1
+int 21h
+
+
+mov ah, 1
+int 21h
+
+
+sub al, 30h
+mov ah, 0
+mov var1, ax
+
+
+;new line
+mov ah, 2
+mov dl, 0AH
+int 21h
+mov dl, 0DH
+int 21h 
+
+
+mov ah, 9
+lea dx, str2
+int 21h
+
+
+mov ah, 1
+int 21h 
+
+
+sub al, 30h
+mov ah, 0
+mov var2, ax
+
+
+mov ax, var1
+mov cx, var2 
+mov bx, var1
+
+
+looping:
+cmp cx, 1
+je done
+mul bx
+dec cx
+jmp looping
+
+
+done:
+;ans is in the register where dx is the High register and ax is the low register.
+jmp exitmain
+ 
+;exit to DOS 
+exit:
+    ret  
+       
+power_calc endp
+exitmain:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Answer to the question no - 8:
+
+
+org 100H
+
+
+.DATA
+   
+str1 dw "Enter a number: $"
+str2 dw "Prime Numbers are: $" 
+size1 db ? 
+var1 db ? 
+lst1 db 30 dup(?)
+
+
+; declare variables here
+
+
+.CODE
+MAIN PROC
+; initialize DS
+
+
+MOV AX,@DATA
+MOV DS,AX 
+; enter your code here   
+    call primedone
+    
+    jmp exitmain
+
+
+
+
+primedone proc 
+
+
+mov ah, 9
+lea dx, str1
+int 21h
+
+
+mov si,0h
+
+
+mov ah, 1
+int 21h
+sub al, 30h
+cmp al,1h
+jle  invalidvalue
+mov size1, al
+
+
+;loop
+mov ch, 0
+mov cl, size1
+loop1: 
+mov var1, cl
+cmp cl, 1h
+jle not_prime
+mov bl, 2
+
+
+loop2:
+mov ah, 0
+mov al, var1
+div bl
+cmp ah, 0
+je not_prime
+inc bl
+
+
+cmp bl, var1
+je push_stack
+jne loop2
+
+
+push_stack:
+mov bh, 0
+mov lst1[si],bl 
+inc si
+
+
+not_prime:
+loop loop1  
+ 
+mov al, size1
+cmp al, 1h
+jne twoinsert
+je notinsert
+
+
+twoinsert:
+mov ax, 2h
+mov lst1[si],al 
+inc si
+
+
+notinsert: 
+;new line
+mov ah, 2
+mov dl, 0AH
+int 21h
+mov dl, 0DH
+int 21h 
+ 
+;printing
+mov ah, 9
+lea dx, str2
+int 21h
+dec si
+loop_exit: 
+
+
+
+
+mov dl, lst1[si] 
+mov dh,0h
+add dx, 30h 
+mov ah, 2
+int 21h
+
+
+cmp si, 0h
+je exit
+dec si
+
+
+
+
+jmp loop_exit
+
+
+invalidvalue: 
+mov ah, 2
+mov dl, 0AH
+int 21h
+mov dl, 0DH
+int 21h
+mov ah, 9
+lea dx, str2
+int 21h 
+
+
+;exit to DOS 
+exit:
+
+
+    ret  
+       
+primedone endp
+
+
+exitmain:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Answer to the question no - 9:
+
+
+ org 100H ; procedural work er jnno minial hoy
+
+
+.DATA    
+
+
+takeinput db "Enter input numbers and stop using a dot(.t:  $"  
+output db "The Output Value exists in array  $" 
+output2 db "The Value Do not exist in the array  $"
+takeinput2 db "Enter the number you want to search in the array:  $"   
+ 
+lst1 db 30 dup(?)
+
+
+var1 dw "?"  
+
+
+; declare variables here
+
+
+.CODE
+MAIN PROC
+
+
+; initialize DS
+
+
+MOV AX,@DATA
+MOV DS,AX
+    
+    call factorial
+    
+    jmp exit
+    
+factorial proc 
+
+
+    mov ah,9
+    lea dx, takeinput
+    int 21h
+    
+    
+    mov si, 0
+    
+    takinginput:
+    
+    mov ah,1
+    int 21h
+    
+    mov ah, 0
+    cmp al, 2Eh
+    je notinputtake
+    
+    mov lst1[si], al
+    inc si
+    jmp takinginput
+    
+    notinputtake:
+
+
+    mov cx,si 
+    dec si
+    
+    mov ah, 2
+    mov dl, 0AH
+    int 21h
+    mov dl, 0DH
+    int 21h    
+    
+    mov ah,9
+    lea dx, takeinput2
+    int 21h
+    
+    
+    mov ah,1
+    int 21h
+    
+    
+    mov bl, al
+   
+    
+    mainloop:  
+    
+    cmp bl, lst1[si]
+    je valueexist
+    
+    cmp si,0h
+    je valuenotexist    
+    sub si, 1h
+  
+    jmp mainloop
+    
+    valueexist:
+   
+    mov ah, 2
+    mov dl, 0AH
+    int 21h
+    mov dl, 0DH
+    int 21h 
+    mov ah,9
+    lea dx, output
+    int 21h
+       
+    jmp exitmm
+    
+    valuenotexist:
+     
+    mov ah, 2
+    mov dl, 0AH
+    int 21h
+    mov dl, 0DH
+    int 21h 
+    
+    mov ah,9
+    lea dx, output2
+    int 21h
+   
+   
+    exitmm:
+     
+    ret 
+    
+factorial endp
+;exit to DOS
+               
+exit:
