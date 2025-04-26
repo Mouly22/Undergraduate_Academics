@@ -1,0 +1,297 @@
+﻿CSE341: Microprocessor
+Lab Final
+
+
+
+
+
+
+
+
+Name: Umme Abira Azmary
+ID: 20101539
+Section: 10
+
+
+
+
+
+
+Question:
+
+
+Develop an e-commerce website where customers can purchase books, you can design it in a way that presents customers with a list of 10 books. Each book will belong to a certain category. 
+Three Tasks:
+i) Display Books: Customers must be able to view the available books. Each book will have a name, category, and price. 
+ii) Book Selection: The customer can choose multiple books from the list by specifying the book numbers and quantity.
+iii) Payment and Billing: Upon successful payment, customers should be able to view their bill. 
+Hints:
+1. Use an array to store the list of books.
+2. Utilize a stack to store the purchased books and pop elements from it to calculate the total price.
+3. Use a macro or a procedure at least once in the implementation.
+
+
+
+
+
+
+
+
+
+
+Answer of the above Question:
+
+
+
+
+.MODEL SMALL   
+
+
+printingTotal macro x
+     
+    ;new line
+     mov ah, 2
+     mov dl, 0AH
+     int 21h
+     mov dl, 0DH
+     int 21h
+     
+     lea dx, v3
+     mov ah, 9
+     int 21h        
+     
+   
+    ;1000 division
+    mov ax,cx 
+    
+    mov cx, 1000 
+    mov dx,0
+    div cx
+
+
+    mov cx, dx
+    
+    mov dx, ax
+    
+    mov ax,0 
+    add dx, 30h
+    mov ah, 2
+    int 21h
+    
+    mov ax, 0
+    mov ax,cx
+    
+    
+    ;100 division
+    mov cl, 100
+    
+    div cl
+    
+    mov bh, ah
+    
+    mov dl,al
+    
+    mov dh,0
+    
+    add dx, 30h
+    
+    mov ah,2
+    int 21h
+    
+    ; 10 division
+    
+    mov al, bh
+    
+    mov ah,0
+    
+    mov cl, 10
+    
+    div cl
+    
+    mov bh, ah
+    
+    mov dl,al
+    
+    mov dh,0
+    
+    add dx, 30h
+    
+    mov ah,2
+    int 21h
+    
+    
+    mov dl, bh
+    
+    mov dh,0
+    
+    add dx, 30h
+    
+    mov ah,2
+    int 21h    
+    
+endm
+
+
+.STACK 100H
+.DATA
+    strings DB '0) NAME: The Vegeterian  CATEGORY: Psychological Horror  PRICE: $', '1) NAME: The Whisper  CATEGORY: Horror  PRICE: $', '2) NAME: Sei Somoy CATEGORY: Historical Fiction  PRICE: $', '3) NAME: Of Blood and Fire CATEGORY: Liberation war  PRICE: $', '4) NAME: The One Thing CATEGORY: Time Management PRICE: $', '5) NAME: The Shadow of the wind CATEGORY: Historical Mystry  PRICE: $', '6) NAME: My Uncle Nepoleon CATEGORY: Comedy  PRICE: $', '7) NAME: Char Adhyay CATEGORY: Political Fiction  PRICE: $', '8) NAME: Lal Nil Dipaboli CATEGORY: Magical Realism  PRICE: $', '9) NAME: Shesher Kobita CATEGORY: Romance  PRICE: $'
+    string_point DW 10 DUP(?) 
+    price dw 10, 30, 20, 80, 45, 15, 30, 50, 10, 80
+    newline DB 13, 10, '$' 
+    v1 dw "Enter book number, press dot(.) when done :$" 
+    v2 dw "  Enter number of copies you want: $"   
+    v3 dw "Your total bill is:  $"
+.CODE
+MAIN PROC
+    ; Initialize DS
+    MOV AX, @DATA
+    MOV DS, AX
+
+
+    ; Initialize string pointers
+    LEA BX, strings
+    MOV CX, 10
+    MOV SI, 0
+    init_ptrs:
+        MOV string_point[SI], BX
+        ADD SI, 2
+        MOV DI, BX
+        find_end:
+            MOV AL, [DI]
+            INC DI
+            CMP AL, '$'
+            JNE find_end
+        MOV BX, DI
+        LOOP init_ptrs
+
+
+    ; Print strings
+    MOV CX, 10
+    MOV SI, 0
+    print_strings:
+        MOV DX, string_point[SI]
+        MOV AH, 09h
+        INT 21h 
+        
+        
+        mov ax,price[SI]
+        mov dl, 10
+        
+        div dl
+        
+        mov bh, ah
+        mov dl, al
+        
+        mov dh,0
+        
+        add dx,30h
+        
+        mov ah,2
+        int 21h
+        
+        mov dl,bh
+        add dx,30h
+        mov ah,2
+        int 21h 
+        
+        
+        LEA DX, newline
+        MOV AH, 09h
+        INT 21h
+        
+        ADD SI, 2
+        LOOP print_strings
+
+
+       
+usr_input:
+lea dx, v1
+mov ah, 9
+int 21h  
+
+
+mov ah, 1
+int 21h 
+
+
+
+
+mov ah, 0h
+cmp ax, 2Eh  ;used '.' symbol to stop taking input 
+je loop_exit
+mov bh, al
+sub bh, 30h
+  
+
+
+lea dx, v2
+mov ah, 9
+int 21h        
+mov ah, 1
+int 21h 
+mov bl, al
+
+
+;new line
+mov ah, 2
+mov dl, 0AH
+int 21h
+mov dl, 0DH
+int 21h
+
+
+
+
+mov ch, 0 
+sub bl, 30h
+mov cl, bl
+
+
+push_indx:        
+mov ah, 0
+
+
+mov al, bh
+push ax         ;pushing in stack
+
+
+loop push_indx 
+
+
+     
+jmp usr_input 
+
+
+            
+loop_exit:
+
+
+mov cx, 0
+stack_pop: 
+
+
+cmp sp, 100h
+je exit
+
+
+pop dx                  ;pop from stack
+mov bx, dx
+add dx, bx
+mov si, dx
+mov dx, price[si] 
+add cx, dx
+
+
+ 
+
+
+jmp stack_pop
+    
+
+
+    ; Exit to DOS 
+exit:
+printingTotal 0  ;calling macro 
+    
+MAIN ENDP
+END MAIN
